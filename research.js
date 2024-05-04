@@ -2,7 +2,7 @@ function search(lat, long, radius, fuelType, selfService){
     if(fuelType === undefined && selfService === undefined) {
         // Handle case with 3 parameters
         $.ajax({
-            url: 'https://carburanti.mise.gov.it/ospzApi/search/zone',
+            url: 'https://cors-anywhere.herokuapp.com/https://carburanti.mise.gov.it/ospzApi/search/zone',
             type: 'POST',
             contentType: 'application/json',
             data: {'points':[{'lat': lat, 'lng': long}], 'radius': radius},
@@ -48,7 +48,7 @@ function search(lat, long, radius, fuelType, selfService){
         }
     
         $.ajax({
-            url: 'https://carburanti.mise.gov.it/ospzApi/search/zone',
+            url: 'https://cors-anywhere.herokuapp.com/https://carburanti.mise.gov.it/ospzApi/search/zone',
             type: 'POST',
             //contentType: 'application/json',
             data: {'points':[{'lat': lat, 'lng': long}], 'fuelType': fuelType, 'radius': radius},
