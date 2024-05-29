@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import Joyride from 'react-joyride';
 import { getJoyrideStyles } from './utils/getJoyrideStyles';
 
-const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode }) => {
+const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, coordinates }) => {
   const { t } = useTranslation();
 
   const dropdownItems1 = [
@@ -51,7 +51,6 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode }) => {
 
   const handleSearch = (input) => {
     if (typeof input === 'string') {
-      // Esegui una ricerca basata sul testo
       const request = {
         query: input,
         fields: ['place_id'],
@@ -64,7 +63,6 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode }) => {
         }
       });
     } else {
-      // Esegui una ricerca basata sull'ID del luogo
       onSearch(input);
     }
   };
@@ -96,6 +94,38 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode }) => {
     if (e.key === 'Enter') {
       handleSearch(searchInput);
     }
+  };
+
+  const handleApiRequest = () => {
+    if (!coordinates) {
+      alert('Please select a location on the map.');
+      return;
+    }
+
+    const apiUrl = 'http://localhost:3000';
+    const params = {
+      points: [coordinates],
+      radius: rangeValue,
+      fuelType: selectedFuel ? selectedFuel : 'all',
+      selfService: isSelfServed ? '1' : '0'
+    };
+
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Referrer-Policy': 'strict-origin-when-cross-origin'
+      },
+      body: JSON.stringify(params)
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Response:", data);
+        // Handle the response data as needed
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   };
 
   const steps = [
@@ -229,7 +259,7 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode }) => {
         </div>
       </div>
       <div className="flex justify-between mt-4">
-        <button className="search-button bg-purple-600 text-white p-2 rounded hover:bg-purple-700 flex items-center" onClick={() => handleSearch(searchInput)}>
+        <button className="search-button bg-purple-600 text-white p-2 rounded hover:bg-purple-700 flex items-center" onClick={handleApiRequest}>
           <FontAwesomeIcon icon={faSearch} className="mr-2" /> {t('card.search')}
         </button>
         <button className="position-button bg-blue-600 text-white p-2 rounded hover:bg-blue-700 flex items-center" onClick={onCenter}>
@@ -249,6 +279,10 @@ Card.propTypes = {
   onSearch: PropTypes.func.isRequired,
   onCenter: PropTypes.func.isRequired,
   darkMode: PropTypes.bool.isRequired,
+  coordinates: PropTypes.shape({
+    lat: PropTypes.number,
+    lng: PropTypes.number,
+  }),
 };
 
 export default Card;

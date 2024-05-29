@@ -78,7 +78,14 @@ function Homepage() {
           <Map coordinates={coordinates} setCoordinates={setCoordinates} range={rangeValue} />
         </div>
         <div className="row-span-1 md:col-span-1 h-full scrollable">
-          <Card rangeValue={rangeValue} setRangeValue={setRangeValue} onSearch={handleSearch} onCenter={handleCenter} darkMode={darkMode} />
+          <Card 
+            rangeValue={rangeValue} 
+            setRangeValue={setRangeValue} 
+            onSearch={handleSearch} 
+            onCenter={handleCenter} 
+            darkMode={darkMode} 
+            coordinates={coordinates} 
+          />
         </div>
       </div>
       <Modal showModal={showModal} handleAllow={handleAllow} handleDeny={handleDeny} />
