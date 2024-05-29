@@ -22,9 +22,6 @@ app.post('/', async (req, res) => {
             },
         });
 
-        // Save the response to a file
-        fs.writeFileSync('info.json', JSON.stringify(response.data, null, 2));
-
         // Set the response headers
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'POST');
@@ -32,6 +29,7 @@ app.post('/', async (req, res) => {
         res.setHeader('Access-Control-Expose-Headers', 'strict-origin-when-cross-origin');
 
         // Output the response
+        console.log(response.data);
         res.json(response.data);
     } catch (error) {
         console.error('Error making request:', error);

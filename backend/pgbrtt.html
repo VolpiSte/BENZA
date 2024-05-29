@@ -11,14 +11,20 @@
     <input type="text" id="lng" placeholder="long">
     <input type="text" id="rad" placeholder="radius">
     <button onclick="executeSearch()">Search</button>
-    <div id="response"></div> <!-- Questo div verrà aggiornato con il risultato -->
+    <div id="response"></div> 
 
     <script>
         function executeSearch() {
             var lat = document.getElementById('lat').value;
             var lng = document.getElementById('lng').value;
             var rad = document.getElementById('rad').value;
-            search(lat, lng, rad); // Assuming 'search' function accepts these parameters
+            search(lat, lng, rad)
+                .then(data => {
+                    document.getElementById('response').textContent = JSON.stringify(data);
+                })
+                .catch(error => {
+                    document.getElementById('response').textContent = 'Error: ' + error;
+                });
         }
     </script>
     <a href="/Capolavoro/index.html">Go to index.html</a>
