@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Research Page</title>
+    <script src="./research.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+    <h1>Research Page</h1>
+    <input type="text" id="lat" placeholder="lat">
+    <input type="text" id="lng" placeholder="long">
+    <input type="text" id="rad" placeholder="radius">
+    <button onclick="executeSearch()">Search</button>
+    <div id="response"></div> <!-- Questo div verrà aggiornato con il risultato -->
+
+    <script>
+        function executeSearch() {
+            var lat = document.getElementById('lat').value;
+            var lng = document.getElementById('lng').value;
+            var rad = document.getElementById('rad').value;
+            search(lat, lng, rad); // Assuming 'search' function accepts these parameters
+        }
+    </script>
+    <a href="/Capolavoro/index.html">Go to index.html</a>
+</body>
+</html>
