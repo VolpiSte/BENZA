@@ -1,0 +1,72 @@
+{
+    "navbar": {
+      "homepage": "Homepage",
+      "aboutUs": "About Us",
+      "darkMode": "Dark Mode"
+    },
+    "modal": {
+      "title": "Allow Geolocation",
+      "description": "We would like to use your location to show you the nearest gas stations. Do you allow us to access your location?",
+      "deny": "Deny",
+      "allow": "Allow"
+    },
+    "card": {
+        "searchInput": "Search Input",
+        "carburante": "Fuel",
+        "tipo": "Brand",
+        "range": "Range (km)",
+        "servicedOrNot": "Serviced or Self-Service",
+        "self": "Self",
+        "serviced": "Serviced",
+        "search": "Search",
+        "position": "Position",
+        "sort": {
+          "select" : "Sort By",
+          "price": "Price",
+          "distance": "Distance"
+        },
+        "fuel": {
+          "all": "All",
+          "gasoline": "Gasoline",
+          "diesel": "Diesel",
+          "gpl": "GPL",
+          "methane": "Methane"
+        },
+        "brand": {
+          "all": "All",
+          "eni": "Eni",
+          "esso": "Esso",
+          "ip": "IP",
+          "q8": "Q8"
+        }
+      },
+      "tutorial": {
+        "searchInput": "Search Input (you can search a street)",
+        "fuelDropdown": "Fuel dropdown (you can filter by your favourite fuel)",
+        "brandDropdown": "Brand dropdown (you can choose your favourite brand)",
+        "rangeSelector": "Range selector (you can select the range from your position for found gas stations)",
+        "servicedOrNot": "Serviced or Not (If you want serviced or self)",
+        "searchButton": "Search button (From this moment you have all the gas station with the filters)",
+        "positionButton": "Position button (Every time you click this button, only if you have allowed to geolocation, you return in your live position)",
+        "infoButton": "Info button (Tutorial)",
+        "flagButton": "Flag button (change the language)",
+        "darkMode": "Dark mode (for dark mode)"
+      },
+      "aboutUs": {
+        "title": "About Us",
+        "description": "We are a team of dedicated professionals committed to providing the best services.",
+        "teamTitle": "Our Team",
+        "teamMember1": {
+          "name": "John Doe",
+          "role": "CEO"
+        },
+        "teamMember2": {
+          "name": "Jane Smith",
+          "role": "CTO"
+        },
+        "teamMember3": {
+          "name": "Alice Johnson",
+          "role": "CFO"
+        }
+      }
+      }
