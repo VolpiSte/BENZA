@@ -1,17 +1,17 @@
-function search(lat, long, radius, fuelType, selfService){
-    if(fuelType === undefined && selfService === undefined) {
+function search(lat, long, radius, fuelType, selfService) {
+    urlLink = 'http://localhost:3000'
+    if (fuelType === undefined && selfService === undefined) {
         // Handle case with 3 parameters
         $.ajax({
-            url: 'https://cors-anywhere.herokuapp.com/https://carburanti.mise.gov.it/ospzApi/search/zone',
+            url: urlLink,
             type: 'POST',
             contentType: 'application/json',
-            data: {'points':[{'lat': lat, 'lng': long}], 'radius': radius},
+            data: JSON.stringify({'points':[{'lat': lat, 'lng': long}], 'radius': radius}),
             success: function (data) {
-                // Your success logic here
+                console.log("Response saved to info.json");
             }
         });
     } else {
-        print('ssss');
         switch(fuelType){
             case 'Benzina':
                 fuelType = '1';
@@ -35,7 +35,7 @@ function search(lat, long, radius, fuelType, selfService){
                 alert('Errore: tipo di carburante non riconosciuto');
                 return;
         }
-    
+
         switch(selfService){
             case true:
                 fuelType += '-1';
@@ -46,22 +46,16 @@ function search(lat, long, radius, fuelType, selfService){
             default:
                 fuelType += '-x';
         }
-    
+
         $.ajax({
-            url: 'https://cors-anywhere.herokuapp.com/https://carburanti.mise.gov.it/ospzApi/search/zone',
+            url: urlLink,
             type: 'POST',
-            //contentType: 'application/json',
             data: {'points':[{'lat': lat, 'lng': long}], 'fuelType': fuelType, 'radius': radius},
             success: function (data) {
-                //alert(data.message);
-                // Create a new Blob from the JSON data
-                var blob = new Blob([JSON.stringify(data, null, 2)], {type : 'application/json'});
-    
-                // Create an object URL for the Blob
-                var url = '.'.createObjectURL(blob);
-    
-                // Open a new window or tab with the object URL
-                window.open(url, '_blank');
+                console.log("Response saved to info.json");
+            },
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
             }
         });
     }
