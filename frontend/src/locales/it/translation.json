@@ -68,5 +68,9 @@
           "name": "Alice Johnson",
           "role": "CFO"
         }
+      },
+      "tableStack": {
+        "fuelType": "Carburante",
+        "price": "Prezzo"
       }
     }

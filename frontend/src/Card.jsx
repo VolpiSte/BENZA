@@ -2,13 +2,13 @@ import { useState, useRef, useEffect } from 'react';
 import Dropdown from './Dropdown';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faInfoCircle, faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faInfoCircle, faLocationCrosshairs, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import Joyride from 'react-joyride';
 import { getJoyrideStyles } from './utils/getJoyrideStyles';
 
-const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, coordinates }) => {
+const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, coordinates, toggleFilters }) => {
   const { t } = useTranslation();
 
   const dropdownItems1 = [
@@ -121,7 +121,9 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, coordin
       .then(response => response.json())
       .then(data => {
         console.log("Response:", data);
+        
         // Handle the response data as needed
+        return data;
       })
       .catch(error => {
         console.error('Error:', error);
@@ -268,6 +270,9 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, coordin
         <button className="info-button bg-gray-600 text-white p-2 rounded hover:bg-gray-700 flex items-center" onClick={() => setRunTutorial(true)}>
           <FontAwesomeIcon icon={faInfoCircle} className="mr-1 ml-1" />
         </button>
+        <button className="filter-button bg-gray-600 text-white p-2 rounded hover:bg-gray-700 flex items-center" onClick={toggleFilters}>
+          <FontAwesomeIcon icon={faFilter} className="mr-1 ml-1" />
+        </button>
       </div>
     </motion.div>
   );
@@ -283,6 +288,7 @@ Card.propTypes = {
     lat: PropTypes.number,
     lng: PropTypes.number,
   }),
+  toggleFilters: PropTypes.func.isRequired,
 };
 
 export default Card;

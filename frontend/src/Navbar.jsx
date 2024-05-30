@@ -52,7 +52,7 @@ const Navbar = ({ toggleDarkMode }) => {
           animate={{ opacity: 1, y: 0 }}
           className="absolute top-16 left-0 w-full bg-gray-800 text-white flex flex-col space-y-2 p-4 md:hidden z-30"
         >
-          <Link to="/" className="hover:text-blue-300 transition-colors duration-300" onClick={() => setMenuOpen(false)}>{t('navbar.howToUse')}</Link>
+          <Link to="/" className="hover:text-blue-300 transition-colors duration-300" onClick={() => setMenuOpen(false)}>{t('navbar.homepage')}</Link>
           <Link to="/about" className="hover:text-blue-300 transition-colors duration-300" onClick={() => setMenuOpen(false)}>{t('navbar.aboutUs')}</Link>
           <label className="inline-flex items-center cursor-pointer mt-4 dark-mode-toggle">
             <input type="checkbox" value="" className="sr-only peer" onChange={toggleDarkMode} />
