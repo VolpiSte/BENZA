@@ -72,5 +72,11 @@
       "tableStack": {
         "fuelType": "Carburante",
         "price": "Prezzo"
-      }
+      },
+      "fuel": "Carburante",
+  "type": "Tipo",
+  "distance": "Distanza",
+  "directions": "Indicazioni",
+  "share": "Condividi"
+      
     }

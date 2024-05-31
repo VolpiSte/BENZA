@@ -56,6 +56,18 @@ const Map = ({ coordinates, setCoordinates, range }) => {
     if (coordinates && markerRef.current && circleRef.current && mapInstance.current) {
       const isMobile = window.innerWidth <= 768;
       const zoomLevel = coordinates ? (isMobile ? 14 : 15) : 6;
+  
+      markerRef.current.setPosition(coordinates);
+      circleRef.current.setCenter(coordinates);
+      mapInstance.current.setCenter(coordinates);
+      mapInstance.current.setZoom(zoomLevel);
+    }
+  }, [coordinates, range, setCoordinates]);
+  
+  useEffect(() => {
+    if (coordinates && markerRef.current && circleRef.current && mapInstance.current) {
+      const isMobile = window.innerWidth <= 768;
+      const zoomLevel = coordinates ? (isMobile ? 14 : 15) : 6;
 
       markerRef.current.setPosition(coordinates);
       circleRef.current.setCenter(coordinates);

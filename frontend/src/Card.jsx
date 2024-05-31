@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import Joyride from 'react-joyride';
 import { getJoyrideStyles } from './utils/getJoyrideStyles';
 
-const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, coordinates, toggleFilters }) => {
+const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, toggleFilters, handleApiRequest }) => {
   const { t } = useTranslation();
 
   const dropdownItems1 = [
@@ -37,9 +37,6 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, coordin
   const [searchInput, setSearchInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [runTutorial, setRunTutorial] = useState(false);
-  const [selectedFuel, setSelectedFuel] = useState(null);
-  const [selectedBrand, setSelectedBrand] = useState(null);
-  const [selectedSort, setSelectedSort] = useState(null);
   const autocompleteService = useRef(null);
   const autocompleteInput = useRef(null);
 
@@ -94,40 +91,6 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, coordin
     if (e.key === 'Enter') {
       handleSearch(searchInput);
     }
-  };
-
-  const handleApiRequest = () => {
-    if (!coordinates) {
-      alert('Please select a location on the map.');
-      return;
-    }
-
-    const apiUrl = 'http://localhost:3000';
-    const params = {
-      points: [coordinates],
-      radius: rangeValue,
-      fuelType: selectedFuel ? selectedFuel : 'all',
-      selfService: isSelfServed ? '1' : '0'
-    };
-
-    fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Referrer-Policy': 'strict-origin-when-cross-origin'
-      },
-      body: JSON.stringify(params)
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log("Response:", data);
-        
-        // Handle the response data as needed
-        return data;
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
   };
 
   const steps = [
@@ -219,10 +182,10 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, coordin
             )}
           </div>
           <div className="col-span-1 fuel-dropdown">
-            <Dropdown title={t('card.carburante')} items={dropdownItems1} onSelect={setSelectedFuel} />
+            <Dropdown title={t('card.carburante')} items={dropdownItems1} onSelect={() => {}} />
           </div>
           <div className="col-span-1 brand-dropdown">
-            <Dropdown title={t('card.tipo')} items={dropdownItems2} onSelect={setSelectedBrand} />
+            <Dropdown title={t('card.tipo')} items={dropdownItems2} onSelect={() => {}} />
           </div>
           <div className="col-span-1 range-selector">
             <label className="block text-sm text-gray-900 dark:text-gray-300 mb-1">{t('card.range')} {rangeValue}</label>
@@ -240,7 +203,7 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, coordin
             <span className="text-sm font-medium text-gray-900 dark:text-gray-300 mb-1">{t('card.servicedOrNot')}</span>
             <label className="inline-flex items-center cursor-pointer">
               <input type="checkbox" className="sr-only peer" checked={isSelfServed} onChange={() => setIsSelfServed(!isSelfServed)} />
-              <div className="relative w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+              <div className="relative w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
               <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                 <AnimatePresence mode='wait'>
                   <motion.span
@@ -256,7 +219,7 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, coordin
             </label>
           </div>
           <div className="col-span-2 sort-dropdown">
-            <Dropdown title={t('card.sort.select')} items={sortingOptions} onSelect={setSelectedSort} />
+            <Dropdown title={t('card.sort.select')} items={sortingOptions} onSelect={() => {}} />
           </div>
         </div>
       </div>
@@ -284,11 +247,8 @@ Card.propTypes = {
   onSearch: PropTypes.func.isRequired,
   onCenter: PropTypes.func.isRequired,
   darkMode: PropTypes.bool.isRequired,
-  coordinates: PropTypes.shape({
-    lat: PropTypes.number,
-    lng: PropTypes.number,
-  }),
   toggleFilters: PropTypes.func.isRequired,
+  handleApiRequest: PropTypes.func.isRequired,
 };
 
 export default Card;
