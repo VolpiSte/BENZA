@@ -77,6 +77,17 @@
   "type": "Tipo",
   "distance": "Distanza",
   "directions": "Indicazioni",
-  "share": "Condividi"
+  "share": "Condividi",
+
+  "fuelTypes": {
+    "Benzina": "Benzina",
+    "Gasolio": "Gasolio",
+    "Metano": "Metano",
+    "GPL": "GPL"
+  },
+  "serviceTypes": {
+    "Self": "Self",
+    "Servito": "Servito"
+  }
       
     }

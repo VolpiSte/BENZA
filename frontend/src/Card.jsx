@@ -8,30 +8,33 @@ import { useTranslation } from 'react-i18next';
 import Joyride from 'react-joyride';
 import { getJoyrideStyles } from './utils/getJoyrideStyles';
 
-const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, toggleFilters, handleApiRequest }) => {
+const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, toggleFilters, handleApiRequest, setShowFilters, setFilterOptions }) => {
   const { t } = useTranslation();
 
   const dropdownItems1 = [
-    { label: t('card.fuel.all'), href: '#' },
-    { label: t('card.fuel.gasoline'), href: '#' },
-    { label: t('card.fuel.diesel'), href: '#' },
-    { label: t('card.fuel.gpl'), href: '#' },
-    { label: t('card.fuel.methane'), href: '#' },
+    { label: t('card.fuel.all'), value: 'all' },
+    { label: t('card.fuel.gasoline'), value: 'gasoline' },
+    { label: t('card.fuel.diesel'), value: 'diesel' },
+    { label: t('card.fuel.gpl'), value: 'gpl' },
+    { label: t('card.fuel.methane'), value: 'methane' },
   ];
 
   const dropdownItems2 = [
-    { label: t('card.brand.all'), href: '#' },
-    { label: t('card.brand.eni'), href: '#' },
-    { label: t('card.brand.esso'), href: '#' },
-    { label: t('card.brand.ip'), href: '#' },
-    { label: t('card.brand.q8'), href: '#' },
+    { label: t('card.brand.all'), value: 'all' },
+    { label: t('card.brand.eni'), value: 'eni' },
+    { label: t('card.brand.esso'), value: 'esso' },
+    { label: t('card.brand.ip'), value: 'ip' },
+    { label: t('card.brand.q8'), value: 'q8' },
   ];
 
   const sortingOptions = [
-    { label: t('card.sort.select'), href: '#' },
-    { label: t('card.sort.price'), href: '#' },
-    { label: t('card.sort.distance'), href: '#' }
+    { label: t('card.sort.price'), value: 'price' },
+    { label: t('card.sort.distance'), value: 'distance' }
   ];
+
+  const [selectedFuel, setSelectedFuel] = useState('all');
+  const [selectedService, setSelectedService] = useState('all');
+  const [selectedSort, setSelectedSort] = useState('');
 
   const [isSelfServed, setIsSelfServed] = useState(false);
   const [searchInput, setSearchInput] = useState('');
@@ -62,6 +65,7 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, toggleF
     } else {
       onSearch(input);
     }
+    setShowFilters(false);  // hide filters on search
   };
 
   const handleInputChange = (e) => {
@@ -92,6 +96,10 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, toggleF
       handleSearch(searchInput);
     }
   };
+
+  useEffect(() => {
+    setFilterOptions({ selectedFuel, selectedService, selectedSort });
+  }, [selectedFuel, selectedService, selectedSort, setFilterOptions]);
 
   const steps = [
     {
@@ -182,10 +190,10 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, toggleF
             )}
           </div>
           <div className="col-span-1 fuel-dropdown">
-            <Dropdown title={t('card.carburante')} items={dropdownItems1} onSelect={() => {}} />
+            <Dropdown title={t('card.carburante')} items={dropdownItems1} onSelect={(item) => setSelectedFuel(item.value)} />
           </div>
           <div className="col-span-1 brand-dropdown">
-            <Dropdown title={t('card.tipo')} items={dropdownItems2} onSelect={() => {}} />
+            <Dropdown title={t('card.tipo')} items={dropdownItems2} onSelect={(item) => setSelectedService(item.value)} />
           </div>
           <div className="col-span-1 range-selector">
             <label className="block text-sm text-gray-900 dark:text-gray-300 mb-1">{t('card.range')} {rangeValue}</label>
@@ -219,12 +227,15 @@ const Card = ({ rangeValue, setRangeValue, onSearch, onCenter, darkMode, toggleF
             </label>
           </div>
           <div className="col-span-2 sort-dropdown">
-            <Dropdown title={t('card.sort.select')} items={sortingOptions} onSelect={() => {}} />
+            <Dropdown title={t('card.sort.select')} items={sortingOptions} onSelect={(item) => setSelectedSort(item.value)} />
           </div>
         </div>
       </div>
       <div className="flex justify-between mt-4">
-        <button className="search-button bg-purple-600 text-white p-2 rounded hover:bg-purple-700 flex items-center" onClick={handleApiRequest}>
+        <button className="search-button bg-purple-600 text-white p-2 rounded hover:bg-purple-700 flex items-center" onClick={() => {
+          handleApiRequest();
+          setShowFilters(false);  // hide filters on search button click
+        }}>
           <FontAwesomeIcon icon={faSearch} className="mr-2" /> {t('card.search')}
         </button>
         <button className="position-button bg-blue-600 text-white p-2 rounded hover:bg-blue-700 flex items-center" onClick={onCenter}>
@@ -249,6 +260,8 @@ Card.propTypes = {
   darkMode: PropTypes.bool.isRequired,
   toggleFilters: PropTypes.func.isRequired,
   handleApiRequest: PropTypes.func.isRequired,
+  setShowFilters: PropTypes.func.isRequired,
+  setFilterOptions: PropTypes.func.isRequired, // add this line
 };
 
 export default Card;

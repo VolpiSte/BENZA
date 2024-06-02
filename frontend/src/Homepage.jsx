@@ -4,10 +4,13 @@ import Map from './Map';
 import Card from './Card';
 import Modal from './Modal';
 import GasPriceList from './GasPriceList';
+import BackToTop from './BackToTop'; // Import BackToTop component
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from 'react-i18next';
 
 function Homepage() {
+  const { t, i18n } = useTranslation();
   const [darkMode, setDarkMode] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [coordinates, setCoordinates] = useState(null);
@@ -15,6 +18,16 @@ function Homepage() {
   const [showFilters, setShowFilters] = useState(true);
   const [showGasPrices, setShowGasPrices] = useState(false);
   const [apiData, setApiData] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [filterOptions, setFilterOptions] = useState({ selectedFuel: 'all', selectedService: 'all', selectedSort: '' });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -81,6 +94,24 @@ function Homepage() {
     }
   }, []);
 
+  const haversineDistance = (coords1, coords2) => {
+    const toRadians = (angle) => (angle * Math.PI) / 180;
+    const R = 6371; // Earth radius in kilometers
+
+    const dLat = toRadians(coords2.lat - coords1.lat);
+    const dLng = toRadians(coords2.lng - coords1.lng);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRadians(coords1.lat)) *
+        Math.cos(toRadians(coords2.lat)) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
   const handleApiRequest = () => {
     if (!coordinates) {
       alert('Please select a location on the map.');
@@ -106,17 +137,51 @@ function Homepage() {
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          const processedData = data.results.map(result => ({
+          let processedData = data.results.map(result => ({
             name: result.name,
             logo: result.brand,
-            fuel: result.fuels.map(fuel => fuel.name).join(', '),
-            type: result.fuels.every(fuel => fuel.isSelf) ? 'Self' : 'Served',
-            distance: `${rangeValue} km`,
+            fuel: result.fuels.map(fuel => `${t(`fuelTypes.${fuel.name}`)} (${t(`serviceTypes.${fuel.isSelf ? 'Self' : 'Servito'}`)})`).join(', '),
+            type: result.fuels.every(fuel => fuel.isSelf) ? t('serviceTypes.Self') : t('serviceTypes.Servito'),
+            distance: `${haversineDistance(coordinates, result.location).toFixed(2)} km`,
             prices: result.fuels.map(fuel => ({
-              type: fuel.name,
+              type: `${t(`fuelTypes.${fuel.name}`)} (${t(`serviceTypes.${fuel.isSelf ? 'Self' : 'Servito'}`)})`,
               amount: `${fuel.price} €`
             })),
+            isSelfService: result.fuels.some(fuel => fuel.isSelf)
           }));
+
+          const { selectedFuel, selectedService, selectedSort } = filterOptions;
+
+          // Filter by fuel type
+          if (selectedFuel !== 'all') {
+            processedData = processedData.filter(station =>
+              station.fuel.toLowerCase().includes(selectedFuel)
+            );
+          }
+
+          // Filter by service type
+          if (selectedService !== 'all') {
+            const isSelf = selectedService === 'self';
+            processedData = processedData.filter(station =>
+              station.isSelfService === isSelf
+            );
+          }
+
+          // Sort data
+          if (selectedSort === 'price') {
+            processedData.sort((a, b) => {
+              const priceA = parseFloat(a.prices[0].amount.split(' ')[0]);
+              const priceB = parseFloat(b.prices[0].amount.split(' ')[0]);
+              return priceA - priceB;
+            });
+          } else if (selectedSort === 'distance') {
+            processedData.sort((a, b) => {
+              const distanceA = parseFloat(a.distance.split(' ')[0]);
+              const distanceB = parseFloat(b.distance.split(' ')[0]);
+              return distanceA - distanceB;
+            });
+          }
+
           setApiData(processedData);
           setShowGasPrices(true);
         } else {
@@ -148,10 +213,10 @@ function Homepage() {
     <div className={`min-h-screen flex flex-col ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
       <Navbar toggleDarkMode={toggleDarkMode} />
       <div className="flex-grow p-4 flex flex-col md:flex-row gap-4">
-        <div className="h-80 md:h-auto md:flex-1">
+        <div className={`h-80 md:h-auto ${isMobile ? 'fixed top-0 left-0 right-0 w-full z-10' : 'md:w-1/2 md:h5/6 md:max-h-[calc(100vh-64px)]'}`}>
           <Map coordinates={coordinates} setCoordinates={setCoordinates} range={rangeValue} />
         </div>
-        <div className="md:flex-1 md:overflow-y-auto">
+        <div className={`md:w-1/2 md:h-screen md:overflow-y-auto md:max-h-[calc(100vh-128px)] ${isMobile ? 'pt-60' : ''}`}>
           {showFilters && (
             <Card
               rangeValue={rangeValue}
@@ -161,6 +226,8 @@ function Homepage() {
               darkMode={darkMode}
               toggleFilters={toggleFilters}
               handleApiRequest={handleApiRequest}
+              setShowFilters={setShowFilters}  // pass the setShowFilters function to Card
+              setFilterOptions={setFilterOptions} // pass the setFilterOptions function to Card
             />
           )}
           {showGasPrices && <GasPriceList darkMode={darkMode} apiData={apiData} />}
@@ -174,9 +241,11 @@ function Homepage() {
           <FontAwesomeIcon icon={faFilter} />
         </button>
       )}
+      <BackToTop /> {/* Add the BackToTop component */}
       <Modal showModal={showModal} handleAllow={handleAllow} handleDeny={handleDeny} />
     </div>
   );
 }
 
 export default Homepage;
+  
